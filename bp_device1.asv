@@ -15,11 +15,6 @@ bioz_plot = myTable.BioZ_Transformed_ohm_;
 ecg_plot = myTable.ECG_mV_;
 
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% BioZ + ECG Overlay Plot 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 % Convert the time intervals to seconds
 time_ecg = seconds(time_intervals_ecg); % assuming time intervals are in minutes
 time_bioz = seconds(time_intervals_bioz);
@@ -153,7 +148,7 @@ legend('ECG', 'R peak');
 title('ECG Data');
 xlabel('Sample Number');
 ylabel('Amplitude');
-xlim([600, 800])
+xlim([100, 1000])
 ylim([-5,5])
 
 subplot(3,1,2);
@@ -163,7 +158,7 @@ legend('Bioimpedance', 'Upstroke');
 title('Bioimpedance Data');
 xlabel('Sample Number');
 ylabel('Amplitude');
-xlim([600, 800])
+xlim([100, 1000])
 ylim([33.2,34.2])
 
 subplot(3,1,3);
