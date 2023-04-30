@@ -127,7 +127,6 @@ bioz_smoothed = conv(bioz_resampled, moving_avg_filter, 'same');
 delay = lag(I);
 bioz_shifted = circshift(bioz_smoothed, [delay 0]);
 
-
 % calculate pulse transit time (PTT) and pulse arrival time (PAT) 
 [pks,r_peak_locs] = findpeaks(ecg_resampled, 'MinPeakHeight', 0.6, 'MinPeakDistance', fs_resample*0.6);
 
@@ -142,7 +141,9 @@ ptt = (bioz_upstroke_locs(1:length(r_peak_locs))-r_peak_locs)/fs_resample;
 % Calculate PAT
 bioz_upstroke_times = bioz_upstroke_locs / fs_resample; % Convert to time
 ecg_r_times = r_peak_locs / fs_resample; % Convert to time
-pat = bioz_upstroke_times(1:length(ecg_r_times)) - ecg_r_times;
+pat = ecg_r_times - bioz_upstroke_times(1:length(ecg_r_times));
+pat_real = diff(pat);
+disp(pat_real);
 
 
 % Plot results
@@ -167,7 +168,7 @@ xlim([600, 800])
 ylim([33.2,34.2])
 
 subplot(3,1,3);
-plot(pat, 'bo-', 'LineWidth', 2);
+plot(pat_real, 'bo-', 'LineWidth', 2);
 hold on;
 %plot(ptt, 'ro-', 'LineWidth', 2); --> figure out why pat and ppt r same
 xlim([1, length(ecg_r_times)]);
@@ -175,3 +176,36 @@ legend('PAT');
 title('Pulse Arrival Times');
 xlabel('Beat Number');
 ylabel('Time (s)');
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Experimentation 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%{
+t = (0:length(bioz_resampled)-1) / fs_resample; % Time vector
+start_idx = find(t >= 8, 1); % Index of the first sample after 10 seconds
+bioz_cut = bioz_resampled(start_idx:end); % Cut out the portion of the signal
+
+
+
+% Find the minimum peak in the bioimpedance signal
+[peaks, locs] = findpeaks(bioz_resampled);
+max_peak_loc = locs(1); % Location of the minimum peak
+max_peak_val = peaks(1); % Value of the minimum peak (flip the sign back to positive)
+
+% Plot the signal and the minimum peak
+figure;
+plot(bioz_resampled);
+hold on;
+plot(t(max_peak_loc), max_peak_val, 'ro');
+xlabel('Time (s)');
+ylabel('Bioimpedance');
+legend('Signal', 'Minimum Peak');
+
+%}
